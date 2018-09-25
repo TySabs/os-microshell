@@ -1,2 +1,6 @@
+# Executables
 *.o
+Assign3
+
+# Mac indexer
 *.DS_Store
