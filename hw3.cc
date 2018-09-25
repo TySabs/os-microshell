@@ -18,28 +18,37 @@ void printShellPrompt() {
   write(1, shellPrompt, strlen(shellPrompt));
 }
 
+bool checkForQuit(char *input1) {
+  int quitFlag1 = 1,
+      quitFlag2 = 1;
+  // Check to make sure user did not type quit
+  quitFlag1 = strncmp(input1, "quit", 4);
+  quitFlag2 = strncmp(input1, "q", 1);
+
+  if (quitFlag1 == 0 || quitFlag2 == 0) {
+    cout << "Quitting the program..." << endl;
+    return false;
+  } else {
+    return true;
+  }
+}
+
 int main(int argc, char *argv[]) {
   char input1[MAX_INPUT_LENGTH] = {};
-  int readSize,
-        quitFlag1 = 1,
-        quitFlag2 = 1;
+  int readSize;
+  bool isLooping = true;
 
-  while (quitFlag1 != 0 && quitFlag2 != 0) {
+  pid_t pid1;
+
+  while (isLooping == true) {
     printShellPrompt();
     readSize = read(0, input1, MAX_INPUT_LENGTH);
     input1[readSize] = '\0';
 
-    // Check to make sure user did not type quit
-    quitFlag1 = strncmp(input1, "quit", 4);
-    quitFlag2 = strncmp(input1, "q", 1);
-
-    if (quitFlag1 == 0 || quitFlag2 == 0) {
-      cout << "Quitting the program..." << endl;
-      exit(0);
-    }
+    isLooping = checkForQuit(input1);
 
     system(input1);
-  }
+  } // end while loop
 
   write(1, "\n", 1);
   return 0;
