@@ -16,6 +16,7 @@ using std::cerr;
 using std::endl;
 using std::list;
 using std::copy;
+using std::string;
 
 void printShellPrompt() {
   char shellPrompt[] = "480shell> ";
@@ -39,8 +40,8 @@ bool checkForQuit(char *input) {
 
 int main(int argc, char *argv[]) {
   char input[MAX_INPUT_LENGTH] = {};
-  char *token1, *cmd1;
-  list<char*> argList;
+  char *argToken, *cmd1, *cmdToken, *rightArg;
+  list<char*> argList, cmdList;
   int readSize, status;
   bool isLooping = true;
 
@@ -63,29 +64,41 @@ int main(int argc, char *argv[]) {
     if (pid1 == 0) {
       cerr << "In child process" << endl;
 
-      token1 = strtok(input, " ");
-      cmd1 = token1;
+      string data = input,
+              pipeChars = " || ",
+              leftString, rightString;
 
-      argList.push_back(token1);
+      int foundIndex = -1;
 
-      token1 = strtok(NULL, " ");
+      foundIndex = data.find(pipeChars);
 
-      while (token1 != NULL) {
-        argList.push_back(token1);
-        token1 = strtok(NULL, " ");
+      if (foundIndex != std::string::npos) {
+        leftString = data.substr(0, foundIndex);
+        rightString = data.substr(foundIndex + 4);
+
+        cerr << "Left Cmd: " << leftString << " -- " << "Right Cmd: " << rightString << endl;
+
+      } else {
+        argToken = strtok(input, " ");
+        cmd1 = argToken;
+
+        argList.push_back(argToken);
+
+        argToken = strtok(NULL, " ");
+
+        while (argToken != NULL) {
+          argList.push_back(argToken);
+          argToken = strtok(NULL, " ");
+        }
+
+        char *args1[argList.size()];
+        copy(argList.begin(), argList.end(), args1);
+
+        execvp(cmd1, args1);
+        cerr << "Error trying to execute the command: " << cmd1 << endl;
       }
 
-      char *args1[argList.size()];
-      copy(argList.begin(), argList.end(), args1);
 
-      cerr << "Command: " << cmd1 << endl;
-      for (unsigned int j = 0; j < argList.size(); j++) {
-        cerr << "Arg#" << j << ": " << args1[j] << endl;
-      }
-
-      execvp(cmd1, args1);
-
-      cerr << "exec error!" << endl;
       exit(127);
 
     // In parent process
