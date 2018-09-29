@@ -65,11 +65,11 @@ int main(int argc, char *argv[]) {
     if (pid1 == 0) {
       cerr << "In child process" << endl;
 
-      const char *inputPtr = strdup(input),
+      const char *inputCopy = strdup(input),
                   *pipeChars = " || ";
 
       string leftString, rightString;
-      string data(inputPtr);
+      string data(inputCopy);
 
       size_t foundIndex = -1;
 
@@ -94,13 +94,23 @@ int main(int argc, char *argv[]) {
           argToken = strtok(NULL, " ");
         }
 
-        char *args1[argList.size()];
-        copy(argList.begin(), argList.end(), args1);
+        int argSize = argList.size();
 
+        if (argSize == 1) argSize++;
+
+        char *args1[argSize];
+
+        if (argList.size() == 1) {
+          args1[0] = cmd1;
+          args1[1] = NULL;
+        } else {
+          copy(argList.begin(), argList.end(), args1);
+        }
+
+        cerr << "argList size: " << argList.size() << endl;
         execvp(cmd1, args1);
         cerr << "Error trying to execute the command: " << cmd1 << endl;
       }
-
 
       exit(127);
 
