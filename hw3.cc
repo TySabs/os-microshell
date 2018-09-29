@@ -39,10 +39,42 @@ bool checkForQuit(char *input) {
   }
 }
 
+void executeCommand(char *cmdString) {
+  char *argToken, *cmd1;
+  list<char*> argList;
+
+  argToken = strtok(cmdString, " ");
+  cmd1 = argToken;
+
+  argList.push_back(argToken);
+
+  argToken = strtok(NULL, " ");
+
+  while (argToken != NULL) {
+    argList.push_back(argToken);
+    argToken = strtok(NULL, " ");
+  }
+
+  int argSize = argList.size();
+
+  if (argSize == 1) argSize++;
+
+  char *args1[argSize];
+
+  if (argList.size() == 1) {
+    args1[0] = cmd1;
+    args1[1] = NULL;
+  } else {
+    copy(argList.begin(), argList.end(), args1);
+  }
+
+  cerr << "argList size: " << argList.size() << endl;
+  execvp(cmd1, args1);
+  cerr << "Error trying to execute the command: " << cmd1 << endl;
+}
+
 int main(int argc, char *argv[]) {
   char input[MAX_INPUT_LENGTH] = {};
-  char *argToken, *cmd1;
-  list<char*> argList, cmdList;
   int readSize, status;
   bool isLooping = true;
 
@@ -68,48 +100,24 @@ int main(int argc, char *argv[]) {
       const char *inputCopy = strdup(input),
                   *pipeChars = " || ";
 
-      string leftString, rightString;
       string data(inputCopy);
 
       size_t foundIndex = -1;
 
       foundIndex = data.find(pipeChars);
 
+      // Pipe block
       if (foundIndex != std::string::npos) {
+        string leftString, rightString;
+
         leftString = data.substr(0, foundIndex);
         rightString = data.substr(foundIndex + 4);
 
         cerr << "Left Cmd: " << leftString << " -- " << "Right Cmd: " << rightString << endl;
 
+      // Non-pipe block
       } else {
-        argToken = strtok(input, " ");
-        cmd1 = argToken;
-
-        argList.push_back(argToken);
-
-        argToken = strtok(NULL, " ");
-
-        while (argToken != NULL) {
-          argList.push_back(argToken);
-          argToken = strtok(NULL, " ");
-        }
-
-        int argSize = argList.size();
-
-        if (argSize == 1) argSize++;
-
-        char *args1[argSize];
-
-        if (argList.size() == 1) {
-          args1[0] = cmd1;
-          args1[1] = NULL;
-        } else {
-          copy(argList.begin(), argList.end(), args1);
-        }
-
-        cerr << "argList size: " << argList.size() << endl;
-        execvp(cmd1, args1);
-        cerr << "Error trying to execute the command: " << cmd1 << endl;
+        executeCommand(input);
       }
 
       exit(127);
