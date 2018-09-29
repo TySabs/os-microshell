@@ -10,6 +10,7 @@
 #include <string.h>
 #include <list>
 #include <algorithm>
+#include <stddef.h>
 
 const int MAX_INPUT_LENGTH = 1024;
 using std::cerr;
@@ -40,7 +41,7 @@ bool checkForQuit(char *input) {
 
 int main(int argc, char *argv[]) {
   char input[MAX_INPUT_LENGTH] = {};
-  char *argToken, *cmd1, *cmdToken, *rightArg;
+  char *argToken, *cmd1;
   list<char*> argList, cmdList;
   int readSize, status;
   bool isLooping = true;
@@ -64,11 +65,13 @@ int main(int argc, char *argv[]) {
     if (pid1 == 0) {
       cerr << "In child process" << endl;
 
-      string data = input,
-              pipeChars = " || ",
-              leftString, rightString;
+      const char *inputPtr = strdup(input),
+                  *pipeChars = " || ";
 
-      int foundIndex = -1;
+      string leftString, rightString;
+      string data(inputPtr);
+
+      size_t foundIndex = -1;
 
       foundIndex = data.find(pipeChars);
 
