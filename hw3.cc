@@ -113,7 +113,19 @@ int main(int argc, char *argv[]) {
         leftString = data.substr(0, foundIndex);
         rightString = data.substr(foundIndex + 4);
 
+        char leftCmd[leftString.size()],
+              rightCmd[rightString.size()];
+
         cerr << "Left Cmd: " << leftString << " -- " << "Right Cmd: " << rightString << endl;
+
+        strcpy(leftCmd, leftString.c_str());
+        strcpy(rightCmd, rightString.c_str());
+
+        cerr << "C String left: " << leftCmd << endl;
+        cerr << "C String right: " << rightCmd << endl;
+
+        // executeCommand(leftCmd);
+        executeCommand(rightCmd);
 
       // Non-pipe block
       } else {
