@@ -11,6 +11,8 @@
 #include <list>
 #include <algorithm>
 #include <stddef.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 const int MAX_INPUT_LENGTH = 1024;
 const int MAX_ARG_LENGTH = 64;
