@@ -140,8 +140,6 @@ int main(int argc, char *argv[]) {
 
     // In child process
     if (pid1 == 0) {
-      cerr << "In child process" << endl;
-
       const char *inputCopy = strdup(input),
                   *pipeChars = " || ";
 
