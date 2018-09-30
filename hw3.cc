@@ -13,6 +13,7 @@
 #include <stddef.h>
 
 const int MAX_INPUT_LENGTH = 1024;
+const int MAX_ARG_LENGTH = 64;
 using std::cerr;
 using std::endl;
 using std::list;
@@ -70,43 +71,24 @@ bool checkForQuit(char *input) {
  * Use: Takes a string, tokenizes it, and executes it as a command
  ***********************************************************************/
 void executeCommand(char *cmdString) {
-  char *argToken, *cmd;
-  list<char*> argList;
 
-  // Initial split
-  argToken = strtok(cmdString, " ");
-  cmd = argToken;
+  char *args[MAX_ARG_LENGTH],
+        **argPtr = args,
+        *token = NULL;;
 
-  argList.push_back(argToken);
-
-  argToken = strtok(NULL, " ");
-
-  // Loop until we are out of arguments
-  while (argToken != NULL) {
-    argList.push_back(argToken);
-    argToken = strtok(NULL, " ");
+  // Tokenize command string
+  token = strtok(cmdString, " ");
+  while (token != NULL) {
+    *argPtr++ = token;
+    token = strtok(NULL, " ");
   }
 
-  // Prepare argument array
-  int argSize = argList.size();
-
-  // Handles commands with no arguments
-  if (argSize == 1) argSize++;
-
-  char *args[argSize];
-
-  // Make second argument NULL if only one argument
-  if (argList.size() == 1) {
-    args[0] = cmd;
-    args[1] = NULL;
-  // If multiple arguments, copy the list into the array
-  } else {
-    copy(argList.begin(), argList.end(), args);
-  }
+  // Set next pointer in args to NULL
+  *argPtr = NULL;
 
   // Execute the command
-  execvp(cmd, args);
-  cerr << "Error trying to execute the command: " << cmd << endl;
+  execvp(args[0], args);
+  cerr << "Error trying to execute the command: " << args[0] << endl;
 } // end executeCommand function
 
 /***********************************************************************
