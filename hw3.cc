@@ -60,7 +60,7 @@ bool checkForQuit(char *input) {
 }
 
 /***********************************************************************
- * checkForQuit function
+ * executeCommand function
  *
  * Arguments(1):
  *  1. char *cmdString - a command to be executed
